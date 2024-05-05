@@ -7,10 +7,8 @@ from sklearn.preprocessing import LabelEncoder
 
 from google.colab import drive
 drive.mount('/content/drive')
-%cd /content/drive/My Drive/Yarisma/data
+%cd /content/drive/My Drive
      
-Mounted at /content/drive
-/content/drive/My Drive/Yarisma/data
 
 
 # Veri setlerini oku
