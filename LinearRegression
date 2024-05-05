@@ -1,0 +1,127 @@
+import pandas as pd
+from sklearn.model_selection import train_test_split
+from sklearn.linear_model import LinearRegression
+from sklearn.metrics import mean_squared_error, mean_absolute_error
+from sklearn.preprocessing import LabelEncoder
+     
+
+from google.colab import drive
+drive.mount('/content/drive')
+%cd /content/drive/My Drive/Yarisma/data
+     
+Mounted at /content/drive
+/content/drive/My Drive/Yarisma/data
+
+
+# Veri setlerini oku
+data = pd.read_csv("path_file")
+     
+
+print("sütun sayısı:",data.shape[1])
+print("satır sayısı:",data.shape[0])
+     
+
+# Özelliklerin belirlenmesi
+features = data.drop(columns=['A', 'B','C'],axis=1).columns.tolist()
+
+print(len(features))
+     
+
+
+# One-hot encoding için kategorik değişkenleri seç
+categorical_features = [ 'A']
+
+# One-hot encoding işlemi
+data = pd.get_dummies(data, columns=categorical_features, dummy_na=True)
+
+# One-hot encoding sonrası oluşan sütun isimlerini al
+one_hot_encoded_columns = data.columns[data.columns.str.startswith(tuple(categorical_features))]
+
+# features listesine one-hot encoded sütun isimlerini ekle
+features += list(one_hot_encoded_columns)
+print(features)
+len(features)
+     
+
+# Label encoding için kategorik değişkenleri seç
+categorical_features = ['A']
+
+# LabelEncoder nesnesini oluşturma
+label_encoder = LabelEncoder()
+
+# Her bir kategorik değişken için label encoding uygulama
+for feature in categorical_features:
+    data[feature + '_encoded'] = label_encoder.fit_transform(data[feature])
+
+# Label encoding sonrası oluşan sütunları özellikler listesine ekleme
+features += [feature + '_encoded' for feature in categorical_features]
+
+print(features)
+print(len(features))
+     
+
+# Bağımsız değişkenler ve bağımlı değişkenin ayrılması
+X = data[features]
+y = data['B']
+     
+
+# Eğitim ve test verilerinin bölünmesi
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+     
+
+# Modelin seçimi ve eğitimi
+model = LinearRegression()
+model.fit(X_train, y_train)
+     
+
+# Modelin performansının değerlendirilmesi
+y_pred = model.predict(X_test)
+mse = mean_squared_error(y_test, y_pred)
+print("Mean Squared Error:", mse)
+
+     
+Mean Squared Error: 
+
+# Modelin performansını değerlendirme (MAE)
+mae = mean_absolute_error(y_test, y_pred)
+print("Mean Absolute Error:", mae)
+     
+Mean Absolute Error: 
+**Tahmin etme **
+
+# Test için hazırlanmış verileri oku
+test_data = pd.read_csv("PATH_FİLE")
+     
+
+print(features)
+len(features)
+     
+
+# One-hot encoding işlemi
+test_data = pd.get_dummies(test_data, columns=categorical_features, dummy_na=True)
+
+# One-hot encoding sonrası oluşan sütunların isimlerini al
+one_hot_encoded_columns_test = test_data.columns[test_data.columns.str.startswith(tuple(categorical_features))]
+
+     
+
+# Tahmin edilecek veriyi hazırla
+X_test = test_data[features]
+     
+
+# Tahminleri yap ve göster
+predicted_values = model.predict(X_test)
+print("Predicted Values:", predicted_values)
+     
+
+
+# Tahminleri yap
+predicted_values = model.predict(X_test)
+
+# Tahmin edilen değerleri yeni bir sütun olarak test verisine ekle
+test_data_with_predictions = X_test.copy()
+test_data_with_predictions['Predicted_Values'] = predicted_values
+
+# Tahmin edilen değerleri içeren DataFrame'i göster
+test_data_with_predictions
+
